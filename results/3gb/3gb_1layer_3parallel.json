@@ -1,0 +1,93 @@
+"run-1" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.1,
+    "Speed": 94.1,
+    "Memory": 166
+  },
+"run-2" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.2,
+    "Speed": 93.8,
+    "Memory": 168
+  },
+"run-3" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.1,
+    "Speed": 94.1,
+    "Memory": 174
+  },
+"run-4" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.2,
+    "Speed": 93.8,
+    "Memory": 167
+  },
+"run-5" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.2,
+    "Speed": 93.8,
+    "Memory": 170
+  },
+"run-6" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.1,
+    "Speed": 94.1,
+    "Memory": 175
+  },
+"run-7" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.2,
+    "Speed": 93.8,
+    "Memory": 178
+  },
+"run-8" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.2,
+    "Speed": 93.8,
+    "Memory": 169
+  },
+"run-9" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.1,
+    "Speed": 94.1,
+    "Memory": 164
+  },
+"run-10" : {
+    "Parallel layers": 3,
+    "Pull Time": 37.3,
+    "Speed": 93.6,
+    "Memory": 168
+  },
+
+37.1
+37.2
+37.1
+37.2
+37.2
+37.1
+37.2
+37.2
+37.1
+37.3
+
+94.1
+93.8
+94.1
+93.8
+93.8
+94.1
+93.8
+93.8
+94.1
+93.6
+
+166
+168
+174
+167
+170
+175
+178
+169
+164
+168

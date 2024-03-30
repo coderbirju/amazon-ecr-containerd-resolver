@@ -1,0 +1,65 @@
+// 3gb-single-layer-no-concurrency-no-parallelism
+
+[ {
+    "run-1" : {
+        "Parallel layers": 1,
+        "Pull Time": 47.3,
+        "Speed": 73.8,
+        "Memory": 16707584
+      },
+    "run-2" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 16580608
+      },
+    "run-3" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.3,
+        "Speed": 84.5,
+        "Memory": 16625664
+      },
+    "run-4" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.1,
+        "Speed": 84.9,
+        "Memory": 15790080
+      },
+    "run-5" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 15282176
+      },
+    "run-6" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 15745024
+      },
+    "run-7" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 15777792
+      },
+    "run-8" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 16105472
+      },
+    "run-9" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 15691776
+      },
+    "run-10" : {
+        "Parallel layers": 1,
+        "Pull Time": 41.2,
+        "Speed": 84.7,
+        "Memory": 15773696
+      }
+  } 
+]

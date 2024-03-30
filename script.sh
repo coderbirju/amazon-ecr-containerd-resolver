@@ -1,6 +1,9 @@
 #!/bin/bash -e
 set -e
-for i in $(seq 1 4); do
+echo "3gb-1-layer-no-concurrency-parallelism" >> results.json
+echo "[" >> results.json
+for i in $(seq 2 6); do
+echo "{" >> results.json
 for j in $(seq 1 10); do
   >&2 echo "Run: $j with parallel arg: $i"
   ECR_PULL_PARALLEL=$i
@@ -11,7 +14,7 @@ for j in $(seq 1 10); do
   CGROUP_PARENT="ecr-pull-benchmark"
   CGROUP_CHILD="count-$j-parallel-${ECR_PULL_PARALLEL}-slice"
   CGROUP=${CGROUP_PARENT}/${CGROUP_CHILD}
-  IMAGE_URL="ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/500mb-single:latest"
+  IMAGE_URL="ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/3gb-single:latest"
   sudo mkdir -p /sys/fs/cgroup/${CGROUP}
   sudo echo '+memory' | sudo tee /sys/fs/cgroup/${CGROUP_PARENT}/cgroup.subtree_control
   sudo echo '+cpu' | sudo tee  /sys/fs/cgroup/${CGROUP_PARENT}/cgroup.subtree_control
@@ -24,15 +27,15 @@ for j in $(seq 1 10); do
   MEMORY=$(cat /sys/fs/cgroup/${CGROUP}/memory.peak)
   CPU=$(cat /sys/fs/cgroup/${CGROUP}/cpu.stat)
   echo "Parallel: ${ECR_PULL_PARALLEL},Time: ${TIME},Speed: ${SPEED},Memory: ${MEMORY}"
-  echo "{
+  echo "\"run-$j\" : {
     \"Parallel layers\": ${ECR_PULL_PARALLEL},
     \"Pull Time\": ${TIME},
     \"Speed\": ${SPEED},
-    \"Memory\": ${MEMORY}
-  }" >> results.json
+    \"Memory\": $(( ${MEMORY} / 1048576 ))
+  }," >> results.json
   sudo rm ${OUTPUT_FILE}
   sudo rmdir /sys/fs/cgroup/${CGROUP}
 done
+ echo "}" >> results.json
 done
-
-# 020023120753.dkr.ecr.us-west-1.amazonaws.com/500mb-single
+echo "]" >> results.json
