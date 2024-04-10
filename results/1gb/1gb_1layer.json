@@ -1,0 +1,76 @@
+[ 
+    {
+    "run-1" : {
+        "Parallel layers": 1,
+        "Pull Time": 11.6,
+        "Speed": 50.0,
+        "Memory": 16715776
+      },
+    "run-2" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.8,
+        "Speed": 59.2,
+        "Memory": 14622720
+      },
+    
+    "run-3" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.7,
+        "Speed": 59.8,
+        "Memory": 15446016
+      },
+    
+    "run-4" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.8,
+        "Speed": 59.2,
+        "Memory": 10670080
+      },
+    
+    "run-5" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.7,
+        "Speed": 59.8,
+        "Memory": 11845632
+      },
+    
+    "run-6" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.7,
+        "Speed": 59.8,
+        "Memory": 14708736
+      },
+    
+    "run-7" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.8,
+        "Speed": 59.2,
+        "Memory": 13258752
+      },
+    
+    "run-8" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.7,
+        "Speed": 59.8,
+        "Memory": 13008896
+      },
+    
+    "run-9" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.8,
+        "Speed": 59.2,
+        "Memory": 15478784
+      },
+    
+    "run-10" : {
+        "Parallel layers": 1,
+        "Pull Time": 9.7,
+        "Speed": 59.8,
+        "Memory": 16105472
+      }
+    }
+]
+    
+
+
+
