@@ -5,18 +5,20 @@ declare -a pull_times
 declare -a speeds
 declare -a memories
 
-imagelist=("ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/3gb-single:latest")
+sudo rm results.json
+sudo rm results_averages.json
 sudo rm -rf ./bin
 sudo make build
-for img in $imagelist; do
+img="ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/1gb-single-layer:latest"
 echo $img >> results_averages.json
-echo $img >> results.json
 echo "[" >> results.json
-for i in $(seq 1 1); do
+echo "{" >> results_averages.json
+for i in $(seq 6 6); do
+set -e
 echo "{" >> results.json
-for j in $(seq 1 1); do
+for j in $(seq 1 3); do
   >&2 echo "Run: $j with parallel arg: $i"
-  ECR_PULL_PARALLEL=$i
+  ECR_PULL_PARALLEL=$(( 7 - $i))
   >&2 sudo service containerd stop
   >&2 sudo rm -rf /var/lib/containerd
   >&2 sudo mkdir -p /var/lib/containerd
@@ -31,40 +33,57 @@ for j in $(seq 1 1); do
   OUTPUT_FILE="/tmp/${CGROUP_CHILD}"
   sudo ./test.sh ${CGROUP} ${OUTPUT_FILE} sudo ECR_PULL_PARALLEL="${ECR_PULL_PARALLEL}" ./bin/ecr-pull ${IMAGE_URL}
   ELAPSED=$(grep elapsed ${OUTPUT_FILE}| tail -n 1)
+  UNPACK=$(grep unpackTime ${OUTPUT_FILE}| tail -n 1)
   TIME=$(cut -d" " -f 2 <<< "${ELAPSED}" | sed -e 's/s//')
+  UNPACKTIME=$(cut -d" " -f 2 <<< "${UNPACK}" | sed -e 's/s//')
   SPEED=$(sed -e 's/.*(//' -e 's/)//' <<< "${ELAPSED}" | cut -d" " -f 1)
   >&2 echo "${ELAPSED}"
   MEMORY=$(cat /sys/fs/cgroup/${CGROUP}/memory.peak)
   CPU=$(cat /sys/fs/cgroup/${CGROUP}/cpu.stat)
-  echo "Parallel: ${ECR_PULL_PARALLEL},Time: ${TIME},Speed: ${SPEED},Memory: ${MEMORY}"
+  echo "Parallel: ${ECR_PULL_PARALLEL},Time: ${TIME},Speed: ${SPEED},Memory: ${MEMORY}, Unpack: ${UNPACKTIME}"
+  tot_Mem=$(( ${MEMORY} / 1048576 ))
   echo "\"run-$j\" : {
     \"Parallel layers\": ${ECR_PULL_PARALLEL},
     \"Pull Time\": ${TIME},
     \"Speed\": ${SPEED},
-    \"Memory\": $(( ${MEMORY} / 1048576 ))
+    \"Memory\": ${tot_Mem}
   }," >> results.json
-  pull_times+=("$TIME")
-  speeds+=("$SPEED")
-  memories+=("$((${MEMORY} / 1048576))")
+  echo "tot_Mem = ${tot_Mem}"
+  if [ ${tot_Mem} -ne 0 ]
+  then
+   pull_times+=("$TIME")
+   speeds+=("$SPEED")
+   memories+=("$tot_Mem")
+   unpack_times+=("$UNPACKTIME")
+  fi
   sudo rm ${OUTPUT_FILE}
   sudo rmdir /sys/fs/cgroup/${CGROUP}
 done
  echo "}" >> results.json
  pull_time_avg=$(echo "${pull_times[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
+ unpack_time_avg=$(echo "${unpack_times[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
  speed_avg=$(echo "${speeds[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
  memory_avg=$(echo "${memories[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
-
+ total_pull_time=$(echo "${pull_times[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
+ total_speed=$(echo "${speeds[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
+ total_memory=$(echo "${memories[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
+ total_unpack_time=$(echo "${unpack_times[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
  echo "\"Averages\":  {
-    \"Parallel layers\": ${i},
-    \"Pull Time\": ${pull_time_avg},
-    \"Speed\": ${speed_avg},
-    \"Memory\": ${memory_avg}
+    \"Avg Parallel layers\": $(( 7 - $i)),
+    \"Avg Pull Time\": ${pull_time_avg},
+    \"Avg Unpack Time\": ${unpack_time_avg},
+    \"Avg Speed\": ${speed_avg},
+    \"Avg Memory\": ${memory_avg},
+    \"Total_Download_time\": ${total_pull_time},
+    \"Total_speed\": ${total_speed},
+    \"Total_mem\": ${total_memory},
+    \"Total_Unpack_time\": ${total_unpack_time},
  }," >> results_averages.json
 
  pull_times=()
  speeds=()
  memories=()
+ unpack_times=()
 done
   echo "]" >> results.json
   echo "=================================================================" >> results.json
-done

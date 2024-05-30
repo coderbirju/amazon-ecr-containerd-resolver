@@ -5,16 +5,14 @@ declare -a pull_times
 declare -a speeds
 declare -a memories
 
-imagelist=("ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/3gb-single:latest")
-sudo rm -rf ./bin
-sudo make build
+imagelist=("ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/1gb-single-layer:latest" "ecr.aws/arn:aws:ecr:us-west-1:020023120753:repository/3gb-single:latest")
 for img in $imagelist; do
 echo $img >> results_averages.json
 echo $img >> results.json
 echo "[" >> results.json
-for i in $(seq 1 1); do
+for i in $(seq 1 6); do
 echo "{" >> results.json
-for j in $(seq 1 1); do
+for j in $(seq 1 10); do
   >&2 echo "Run: $j with parallel arg: $i"
   ECR_PULL_PARALLEL=$i
   >&2 sudo service containerd stop
@@ -50,6 +48,9 @@ for j in $(seq 1 1); do
   sudo rmdir /sys/fs/cgroup/${CGROUP}
 done
  echo "}" >> results.json
+ total_pull_time=$(echo "${pull_times[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
+ total_speed=$(echo "${speeds[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
+ total_memory=$(echo "${memories[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum}')
  pull_time_avg=$(echo "${pull_times[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
  speed_avg=$(echo "${speeds[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
  memory_avg=$(echo "${memories[@]}" | tr ' ' '\n' | awk '{sum+=$1} END {print sum/NR}')
@@ -58,7 +59,10 @@ done
     \"Parallel layers\": ${i},
     \"Pull Time\": ${pull_time_avg},
     \"Speed\": ${speed_avg},
-    \"Memory\": ${memory_avg}
+    \"Memory\": ${memory_avg},
+    \"Total_Download_time\": ${total_pull_time},
+    \"Total_speed\": ${total_speed},
+    \"Total_mem\": ${total_memory}
  }," >> results_averages.json
 
  pull_times=()

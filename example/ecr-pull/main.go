@@ -80,7 +80,7 @@ func main() {
 		}
 		return nil, nil
 	})
-	// With ECR resolver
+
 	resolver, err := ecr.NewResolver(ecr.WithLayerDownloadParallelism(parallelism))
 	if err != nil {
 		log.G(ctx).WithError(err).Fatal("Failed to create resolver")
@@ -90,45 +90,16 @@ func main() {
 	img, err := client.Pull(ctx, ref,
 		containerd.WithResolver(resolver),
 		containerd.WithImageHandler(h),
-		containerd.WithMaxConcurrentDownloads(1),
 		containerd.WithSchema1Conversion)
 	stopProgress()
-	containerd.WithMaxConcurrentDownloads(1)
-
-	// With standard resolver
-
-	// var username string
-	// var secret string
-	// hostOptions := docker.ConfigureDefaultRegistries() config.HostOptions{}
-	// hostOptions.Credentials = func(host string) (string, string, error) {
-	// 	return username, secret, nil
-	// }
-
-	// var PushTracker = docker.NewInMemoryTracker()
-	// options := docker.ResolverOptions{
-	// 	Tracker: PushTracker,
-	// }
-	// options.Hosts = config.ConfigureHosts(ctx, hostOptions)
-
-	// log.G(ctx).WithField("ref", ref).Info("Pulling from Amazon ECR")
-	// img, err := client.Pull(ctx, ref,
-	// 	containerd.WithResolver(docker.NewResolver(options)),
-	// 	containerd.WithImageHandler(h),
-	// 	containerd.WithMaxConcurrentDownloads(1),
-	// 	containerd.WithSchema1Conversion)
-	// stopProgress()
-
 	if err != nil {
 		log.G(ctx).WithError(err).WithField("ref", ref).Fatal("Failed to pull")
 	}
 	<-progress
 	log.G(ctx).WithField("img", img.Name()).Info("Pulled successfully!")
-
-	os.Setenv("ECR_SKIP_UNPACK", "true")
 	if skipUnpack := os.Getenv("ECR_SKIP_UNPACK"); skipUnpack != "" {
 		return
 	}
-
 	snapshotter := containerd.DefaultSnapshotter
 	if newSnapshotter := os.Getenv("CONTAINERD_SNAPSHOTTER"); newSnapshotter != "" {
 		snapshotter = newSnapshotter
